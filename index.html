@@ -2,176 +2,184 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>PokéGo Pro - 終極助手</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>PokéGo 冒險指南</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --primary: #ef4444; --primary-soft: #fef2f2;
-      --bg: #f8fafc; --surface: #ffffff;
-      --text-main: #0f172a; --text-sub: #64748b;
+      --primary: #2563eb; --primary-soft: #eff6ff; --accent: #f59e0b; 
+      --bg: #f8fafc; --surface: #ffffff; --text-main: #0f172a; --text-sub: #64748b;
+      --shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    * { box-sizing: border-box; font-family: 'Nunito', 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent;}
-    body { background: var(--bg); color: var(--text-main); margin: 0; padding-bottom: 80px; }
-    .container { max-width: 480px; margin: 0 auto; }
-    
-    header { background: var(--surface); padding: 16px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 50;}
-    header h1 { margin: 0; font-size: 20px; font-weight: 900; color: var(--primary); }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Nunito', 'Noto Sans TC', sans-serif; }
+    body { background-color: var(--bg); margin: 0; color: var(--text-main); padding-bottom: 50px; }
+    .container { max-width: 480px; margin: 0 auto; position: relative; }
 
-    .view { display: none; padding: 20px; animation: fadeIn 0.3s; }
-    .view.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    /* 頂部導航 */
+    header { background: var(--surface); padding: 15px 20px; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between;}
+    header h1 { margin: 0; font-size: 22px; font-weight: 900; color: var(--primary); }
+    .subtitle { font-size: 13px; font-weight: 700; color: var(--text-sub); }
 
-    /* 導航列 */
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 20px 24px; border-top: 1px solid #e2e8f0; z-index: 100;}
-    .nav-item { text-align: center; color: var(--text-sub); font-size: 12px; font-weight: 800; cursor: pointer; }
-    .nav-item.active { color: var(--primary); }
-    .nav-icon { font-size: 24px; margin-bottom: 4px; }
+    /* 區塊標題 */
+    .section-title { font-size: 18px; font-weight: 900; margin: 25px 20px 15px; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
 
-    /* 遊戲擬真三段橫條 */
-    .stat-row { margin-bottom: 20px; }
-    .stat-lbl { font-size: 14px; font-weight: 900; margin-bottom: 8px; display: flex; justify-content: space-between;}
-    .segments { display: flex; gap: 4px; height: 16px; }
-    .seg { flex: 1; background: #e2e8f0; border-radius: 4px; cursor: pointer; transition: 0.2s; }
-    .seg.filled { background: #facc15; } /* 黃色 */
-    .seg.maxed { background: #ef4444; } /* 紅色 (全滿) */
+    /* 外部工具箱 (Grid 按鈕) */
+    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; }
+    .tool-card { background: var(--surface); border: 2px solid #e2e8f0; border-radius: 16px; padding: 15px; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; text-align: center; transition: 0.2s; box-shadow: var(--shadow);}
+    .tool-card:active { transform: scale(0.96); border-color: var(--primary); background: var(--primary-soft); }
+    .tool-icon { font-size: 28px; margin-bottom: 8px; }
+    .tool-name { font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 4px;}
+    .tool-desc { font-size: 12px; font-weight: 700; color: var(--text-sub); line-height: 1.4;}
 
-    .decision-badge { margin-top: 20px; padding: 16px; border-radius: 12px; text-align: center; font-weight: 900; font-size: 18px; border: 2px solid transparent;}
-    .badge-keep { background: #ecfdf5; color: #10b981; border-color: #a7f3d0; }
-    .badge-transfer { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
+    /* 活動看板 */
+    .events-wrapper { padding: 0 20px; }
+    .events-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory;}
+    .events-scroll::-webkit-scrollbar { display: none; }
+    .event-card { flex: 0 0 85%; background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; scroll-snap-align: center; text-decoration: none; color: inherit; border: 1px solid #f1f5f9; display: flex; flex-direction: column;}
+    .event-img { width: 100%; height: 140px; background-color: #e2e8f0; object-fit: cover; }
+    .event-info { padding: 12px 15px; }
+    .event-title { font-size: 15px; font-weight: 900; line-height: 1.3; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .event-tags { font-size: 12px; font-weight: 700; color: var(--text-sub); display: flex; gap: 8px; }
+    .tag { background: var(--primary-soft); color: var(--primary); padding: 2px 8px; border-radius: 6px; }
 
-    /* 活動與標籤 */
-    .filter-tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 5px;}
-    .filter-btn { padding: 6px 12px; background: #e2e8f0; border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap; cursor: pointer;}
-    .filter-btn.active { background: var(--text-main); color: white; }
-    
-    .card { background: var(--surface); border-radius: 16px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    .card-title { font-size: 16px; font-weight: 900; margin-bottom: 8px; }
-    .card-meta { font-size: 12px; color: var(--text-sub); }
+    /* PTT 情報區塊 */
+    .wiki-wrapper { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+    .wiki-card { background: var(--surface); border-radius: 12px; padding: 14px 16px; box-shadow: var(--shadow); text-decoration: none; color: inherit; display: block; border: 1px solid #e2e8f0; transition: 0.2s;}
+    .wiki-card:active { background: var(--primary-soft); border-color: var(--primary); }
+    .wiki-cat { font-size: 11px; font-weight: 900; color: var(--accent); margin-bottom: 6px; letter-spacing: 0.5px;}
+    .wiki-title { font-size: 15px; font-weight: 800; line-height: 1.4; color: var(--text-main); margin-bottom: 4px;}
+    .wiki-date { font-size: 12px; font-weight: 700; color: var(--text-sub); }
+
+    /* 載入畫面 */
+    #loader { position: fixed; inset: 0; background: rgba(248,250,252,0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: 900; font-size: 16px; color: var(--primary); }
+    .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
+
+  <div id="loader">
+    <div class="spinner"></div>
+    <div id="loader-text">連線至大木博士研究所...</div>
+  </div>
+
   <div class="container">
-    <header><h1>PokéGo Pro</h1></header>
-
-    <!-- 戰力評估 (擬真橫條) -->
-    <main id="view-iv" class="view active">
-      <h2 style="font-size: 20px; margin-top: 0;">1. 評價你的寶可夢</h2>
-      <select id="poke-select" style="width: 100%; padding: 12px; font-size: 16px; font-weight: 800; border-radius: 8px; margin-bottom: 20px;">
-        <option value="150">超夢 (超能力)</option>
-        <option value="4">小火龍 (火)</option>
-      </select>
-
-      <div class="card">
-        <div style="font-size:12px; color:var(--text-sub); margin-bottom:15px;">※ 點擊橫條，對齊遊戲中的長度</div>
-        
-        <div class="stat-row">
-          <div class="stat-lbl"><span>攻擊</span> <span id="val-atk">15</span></div>
-          <div class="segments" id="seg-atk">
-            <div class="seg maxed" onclick="setStat('atk', 5)"></div>
-            <div class="seg maxed" onclick="setStat('atk', 10)"></div>
-            <div class="seg maxed" onclick="setStat('atk', 15)"></div>
-          </div>
-        </div>
-        
-        <div class="stat-row">
-          <div class="stat-lbl"><span>防禦</span> <span id="val-def">15</span></div>
-          <div class="segments" id="seg-def">
-            <div class="seg maxed" onclick="setStat('def', 5)"></div>
-            <div class="seg maxed" onclick="setStat('def', 10)"></div>
-            <div class="seg maxed" onclick="setStat('def', 15)"></div>
-          </div>
-        </div>
-
-        <div class="stat-row">
-          <div class="stat-lbl"><span>血量</span> <span id="val-sta">15</span></div>
-          <div class="segments" id="seg-sta">
-            <div class="seg maxed" onclick="setStat('sta', 5)"></div>
-            <div class="seg maxed" onclick="setStat('sta', 10)"></div>
-            <div class="seg maxed" onclick="setStat('sta', 15)"></div>
-          </div>
-        </div>
-
-        <div id="decision" class="decision-badge badge-keep">
-          🟢 完美神寵！值得投資！
-        </div>
+    <header>
+      <div>
+        <h1>PokéGo 冒險指南</h1>
+        <div class="subtitle">為情侶出遊打造的隨身手冊</div>
       </div>
-    </main>
+    </header>
 
-    <!-- 活動情報 -->
-    <main id="view-events" class="view">
-      <h2 style="font-size: 20px; margin-top: 0;">2. 活動情報</h2>
-      <div class="filter-tabs">
-        <div class="filter-btn active">全部</div>
-        <div class="filter-btn">現正進行</div>
-        <div class="filter-btn">台灣專屬</div>
+    <!-- 區塊 1：神器工具箱 -->
+    <div class="section-title">🧰 實用輔助神器</div>
+    <div class="tools-grid">
+      <a href="https://pvpoke.tw/" target="_blank" class="tool-card">
+        <div class="tool-icon">⚔️</div>
+        <div class="tool-name">PvPoke</div>
+        <div class="tool-desc">最強對戰資料庫，查聯盟排名與技能</div>
+      </a>
+      <a href="https://leekduck.com/events/" target="_blank" class="tool-card">
+        <div class="tool-icon">🦆</div>
+        <div class="tool-name">LeekDuck</div>
+        <div class="tool-desc">最詳盡的活動圖文時間表 (英文)</div>
+      </a>
+      <div class="tool-card" onclick="alert('建議至手機商店下載 PokeGenie，只要截圖就能瞬間幫你算出完美度與對戰排名！不用再手動輸入數字了！')">
+        <div class="tool-icon">📱</div>
+        <div class="tool-name">PokeGenie App</div>
+        <div class="tool-desc">算 IV 不求人！截圖直接辨識星數</div>
       </div>
-      <div class="card">
-        <div class="card-title">萬聖節惡作劇 (現正進行)</div>
-        <div class="card-meta">2026/10/24 - 2026/11/01</div>
-      </div>
-    </main>
+      <a href="https://campfir.com/" target="_blank" class="tool-card">
+        <div class="tool-icon">🔥</div>
+        <div class="tool-name">Campfire</div>
+        <div class="tool-desc">官方社群，出門前查哪裡有團體戰</div>
+      </a>
+    </div>
 
-    <!-- 知識庫 -->
-    <main id="view-wiki" class="view">
-      <h2 style="font-size: 20px; margin-top: 0;">3. 大木博士知識庫</h2>
-      <div class="card">
-        <div class="card-meta">【新手必看】</div>
-        <div class="card-title">暗影寶可夢該淨化嗎？</div>
-        <div style="font-size: 14px; margin-top: 8px;">不要淨化！暗影擁有額外 20% 攻擊加成...</div>
+    <!-- 區塊 2：近期活動 -->
+    <div class="section-title">✨ 近期活動情報</div>
+    <div class="events-wrapper">
+      <div class="events-scroll" id="event-list">
+        <!-- GAS 資料載入此處 -->
       </div>
-    </main>
+    </div>
 
-    <nav class="bottom-nav">
-      <div class="nav-item active" onclick="switchTab('iv')"><div class="nav-icon">🎯</div>評價</div>
-      <div class="nav-item" onclick="switchTab('events')"><div class="nav-icon">📅</div>活動</div>
-      <div class="nav-item" onclick="switchTab('wiki')"><div class="nav-icon">📖</div>知識庫</div>
-    </nav>
+    <!-- 區塊 3：PTT 玩家情報與心得 -->
+    <div class="section-title">📖 最新情報與心得 (PTT)</div>
+    <div class="wiki-wrapper" id="wiki-list">
+      <!-- GAS 資料載入此處 -->
+    </div>
   </div>
 
   <script>
-    // 橫條點擊邏輯
-    let stats = { atk: 15, def: 15, sta: 15 };
+    // 你的專屬 GAS API 網址
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycby6J4p8K3RBtHgeGRzTfOnoNffbUksdcLoR_qpPa4a8lqytvN37gzemQ7wvbdkyujcsaQ/exec";
 
-    function setStat(stat, val) {
-      stats[stat] = val;
-      document.getElementById(`val-${stat}`).innerText = val;
-      
-      const segments = document.getElementById(`seg-${stat}`).children;
-      const isMax = (val === 15);
-      
-      for(let i=0; i<3; i++) {
-        segments[i].className = 'seg'; // reset
-        if ((i+1)*5 <= val) {
-          segments[i].classList.add(isMax ? 'maxed' : 'filled');
+    async function fetchAppData() {
+      try {
+        const response = await fetch(GAS_API_URL);
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          
+          // --- 渲染活動情報 ---
+          const evScroll = document.getElementById('event-list');
+          evScroll.innerHTML = ''; 
+          if (result.data.events && result.data.events.length > 0) {
+            result.data.events.forEach(ev => {
+              // 處理可能沒有圖片的情況
+              const imgSrc = ev['圖片連結'] ? ev['圖片連結'] : 'https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=400&q=80';
+              
+              evScroll.innerHTML += `
+                <a href="${ev['情報網址'] || '#'}" target="_blank" class="event-card">
+                  <img src="${imgSrc}" class="event-img" loading="lazy">
+                  <div class="event-info">
+                    <div class="event-title">${ev['活動名稱']}</div>
+                    <div class="event-tags">
+                      <span class="tag">${ev['地區標籤'] || '全球'}</span>
+                      <span class="tag" style="background:#fef3c7; color:#b45309;">${ev['活動狀態'] || '情報'}</span>
+                    </div>
+                  </div>
+                </a>`;
+            });
+          } else {
+            evScroll.innerHTML = '<div style="padding:15px; color:#64748b; font-weight:700;">目前無最新活動資料，請確認 GAS 爬蟲是否執行。</div>';
+          }
+
+          // --- 渲染 PTT 知識庫/情報 ---
+          const wikiWrapper = document.getElementById('wiki-list');
+          wikiWrapper.innerHTML = '';
+          if (result.data.wikis && result.data.wikis.length > 0) {
+            result.data.wikis.forEach(wiki => {
+              wikiWrapper.innerHTML += `
+                <a href="${wiki['文章連結']}" target="_blank" class="wiki-card">
+                  <div class="wiki-cat">${wiki['分類標籤']}</div>
+                  <div class="wiki-title">${wiki['文章標題']}</div>
+                  <div class="wiki-date">${wiki['發布時間']}</div>
+                </a>`;
+            });
+          } else {
+            wikiWrapper.innerHTML = '<div style="padding:15px; color:#64748b; font-weight:700;">目前無最新文章，請確認 GAS 爬蟲是否執行。</div>';
+          }
+        } else {
+          throw new Error(result.message || "未知錯誤");
         }
-      }
-      evaluate();
-    }
-
-    function evaluate() {
-      const total = stats.atk + stats.def + stats.sta;
-      const dec = document.getElementById('decision');
-      
-      if (total >= 40) {
-        dec.className = 'decision-badge badge-keep';
-        dec.innerText = '🟢 頂尖戰力！值得投資！';
-      } else if (stats.atk <= 5 && stats.def >= 10 && stats.sta >= 10) {
-        dec.className = 'decision-badge badge-keep';
-        dec.innerText = '🟡 PvP 聯盟潛力股！';
-      } else {
-        dec.className = 'decision-badge badge-transfer';
-        dec.innerText = '🗑️ 建議傳送換糖果';
+        
+        // 隱藏全螢幕載入畫面
+        document.getElementById('loader').style.opacity = '0';
+        setTimeout(() => document.getElementById('loader').style.display = 'none', 300);
+        
+      } catch (error) {
+        console.error("抓取資料失敗：", error);
+        document.getElementById('loader-text').innerText = '載入失敗，請檢查 API 網址或重新整理。';
+        document.getElementById('loader-text').style.color = '#ef4444';
+        document.querySelector('.spinner').style.borderTopColor = '#ef4444';
       }
     }
 
-    // 分頁切換
-    function switchTab(tab) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('view-' + tab).classList.add('active');
-      event.currentTarget.classList.add('active');
-    }
+    // 網頁啟動時立刻呼叫
+    fetchAppData();
   </script>
 </body>
 </html>
